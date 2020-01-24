@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 // });
 
 Route::post('login', 'APILoginController@login');
+Route::post('register', 'UserController@store');
 
 Route::middleware('jwt.auth')->get('users', function () {
     return auth('api')->user();
