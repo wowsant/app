@@ -8,8 +8,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use App\User;
 
-use App\Commons\Messages;
-
 class UserController extends Controller
 {
     /**

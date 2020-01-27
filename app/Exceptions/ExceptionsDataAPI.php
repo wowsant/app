@@ -8,8 +8,7 @@ use Exception;
 class ExceptionsDataAPI
 {
     const MSG_01 = 'Erro ao gravar informação, processo não realizado.';
-    const MSG_02 = 'Erro ao gravar informação, processo não realizado';
-    const MSG_03 = 'Processo realizado com sucesso.';
+    const MSG_02 = 'Processo realizado com sucesso.';
 
     const MESSAGE = 'message';
     const INVALID_DATA = 'invalid_data';
@@ -26,7 +25,7 @@ class ExceptionsDataAPI
 
             default:
                 return response()->json([
-                    self::MESSAGE => self::MSG_02
+                    self::MESSAGE => self::MSG_01
                 ], 500);
                 break;
         }
@@ -36,7 +35,7 @@ class ExceptionsDataAPI
     static function success($data = array(), $msg ='') {
 
         return response()->json([
-            self::MESSAGE => self::MSG_03,
+            self::MESSAGE => self::MSG_02,
             'data' => $data
         ], 201);
     }
