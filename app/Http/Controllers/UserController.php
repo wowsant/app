@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ExceptionsDataAPI;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use App\User;
+
+use App\Commons\Messages;
 
 class UserController extends Controller
 {
@@ -37,16 +40,28 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $rules = array([
-            'name' => 'required|unique:users|max:255',
-            'email' => 'required',
-        ]);
+        $rules = array(
+            'name'     => 'required|max:255',
+            'email'    => 'required|unique:users|max:255|email',
+            'password' => 'required|max:255'
+        );
 
-        $sant = $this->requestDataValidation($request, $rules);
+        if ($this->requestDataValidation($request, $rules)) {
 
+            return ExceptionsDataAPI::error(
+                '406',
+                $this->requestDataValidation($request, $rules)
+            );
+        }
 
-        print_r($sant); exit;
+        try {
 
+            User::create($request->all());
+
+        } catch (\Exception $th) {
+            return $th;
+            Log::info($th);
+        }
 
     }
 
