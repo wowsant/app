@@ -30,7 +30,11 @@ class ExceptionsDataAPI
                     self::INVALID_DATA => $data
                 ], 406);
                 break;
-
+            case '401':
+                return response()->json([
+                    self::MESSAGE => self::MSG_04
+                ], 401);
+                break;
             default:
                 return response()->json([
                     self::MESSAGE => self::MSG_01

@@ -11,6 +11,10 @@ use App\User;
 class UserController extends Controller
 {
 
+    public function __construct(User $user) {
+        $this->objeto = $user;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -57,7 +61,7 @@ class UserController extends Controller
 
         try {
 
-            $dataReturn = User::create($dataRequest);
+            $dataReturn = $this->objeto->create($dataRequest);
 
             return ExceptionsDataAPI::success(
                 200, $dataReturn
@@ -78,7 +82,7 @@ class UserController extends Controller
      */
     public function show()
     {
-        return ExceptionsDataAPI::success(200, User::find(auth()->user()->id));
+        return ExceptionsDataAPI::success(200, $this->objeto->find(auth()->user()->id()));
     }
 
     /**
@@ -99,9 +103,33 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $this->objeto->find(auth()->user()->id);
+
+        if (isset($request->name)) {
+            $this->objeto->name = $request->name;
+        }
+        if (isset($request->password)) {
+            $this->objeto->password = Hash::make($request->password);
+        }
+        if (isset($request->email)) {
+            $this->objeto->email = $request->email;
+        }
+        try {
+
+            $this->objeto->save();
+            return ExceptionsDataAPI::success(
+                200, $this->objeto
+            );
+
+        } catch (Exception $ex) {
+            if ($this->objeto->save()) {
+                return ExceptionsDataAPI::error(
+                    401, $ex->getMessage()
+                );
+            }
+        }
     }
 
     /**
