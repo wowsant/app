@@ -54,13 +54,18 @@ class UserController extends Controller
 
         try {
 
-            User::create($request->all());
+            $user = new User();
+            $user->name = $request->get('name');
+            $user->email = $request->get('email');
+            $user->password = $request->get('password');
+            $user->state_id = 3;
+            $user->save();
+
+            Log::info($user->save());
 
         } catch (\Exception $th) {
-            return $th;
             Log::info($th);
         }
-
     }
 
     /**
