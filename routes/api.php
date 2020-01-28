@@ -24,4 +24,5 @@ Route::middleware('jwt.auth')->get('users', function () {
     return auth('api')->user();
 
  // teste comentario 
+    // teste branch develop
 });
