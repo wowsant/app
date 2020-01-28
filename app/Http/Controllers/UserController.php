@@ -10,6 +10,7 @@ use App\User;
 
 class UserController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +18,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+
     }
 
     /**
@@ -47,24 +48,25 @@ class UserController extends Controller
         if ($this->requestDataValidation($request, $rules)) {
 
             return ExceptionsDataAPI::error(
-                '406',
-                $this->requestDataValidation($request, $rules)
+                406, $this->requestDataValidation($request, $rules)
             );
         }
 
+        $dataRequest = $request->all();
+        $dataRequest['password'] = Hash::make($request->get('password'));
+
         try {
 
-            $user = new User();
-            $user->name = $request->get('name');
-            $user->email = $request->get('email');
-            $user->password = $request->get('password');
-            $user->state_id = 3;
-            $user->save();
+            $dataReturn = User::create($dataRequest);
 
-            Log::info($user->save());
-
-        } catch (\Exception $th) {
-            Log::info($th);
+            return ExceptionsDataAPI::success(
+                200, $dataReturn
+            );
+        } catch (\Exception $ex) {
+            Log::info($ex);
+            return ExceptionsDataAPI::error(
+                500, $ex
+            );
         }
     }
 
@@ -74,9 +76,9 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show()
     {
-        //
+        return ExceptionsDataAPI::success(200, User::find(auth()->user()->id));
     }
 
     /**
@@ -87,7 +89,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        print_r($id); exit;
     }
 
     /**
