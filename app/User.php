@@ -39,6 +39,18 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
+    public $rulesStore = [
+        'name'     => 'required|max:255',
+        'email'    => 'required|unique:users|max:255|email',
+        'password' => 'required|max:255'
+    ];
+
+    public $rulesUpdate = [
+        'name'     => 'max:255',
+        'email'    => 'max:255|email',
+        'password' => 'max:255'
+    ];
+
     public function getJWTIdentifier()
     {
       return $this->getKey();

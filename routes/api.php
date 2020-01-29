@@ -18,8 +18,6 @@ Route::post('auth/register', 'UserController@store');
 
 Route::group(['middleware' => 'jwt.auth'], function() {
 
-    # Retorna dados do usuario autenticado
     Route::get('user/me', 'UserController@show');
     Route::put('user/update', 'UserController@update');
-
 });

@@ -12,7 +12,7 @@ class UserController extends Controller
 {
 
     public function __construct(User $user) {
-        $this->objeto = $user;
+        $this->objectDb = $user;
     }
 
     /**
@@ -43,30 +43,20 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $rules = array(
-            'name'     => 'required|max:255',
-            'email'    => 'required|unique:users|max:255|email',
-            'password' => 'required|max:255'
-        );
-
-        if ($this->requestDataValidation($request, $rules)) {
-
-            return ExceptionsDataAPI::error(
-                406, $this->requestDataValidation($request, $rules)
-            );
+        if ($this->requestDataValidation($request, $this->objectDb->rulesStore)) {
+            return ExceptionsDataAPI::error( 406, $this->requestDataValidation($request, $rules));
         }
 
         $dataRequest = $request->all();
         $dataRequest['password'] = Hash::make($request->get('password'));
 
         try {
-
-            $dataReturn = $this->objeto->create($dataRequest);
-
+            $dataReturn = $this->objectDb->create($dataRequest);
             return ExceptionsDataAPI::success(
                 200, $dataReturn
             );
         } catch (\Exception $ex) {
+
             Log::info($ex);
             return ExceptionsDataAPI::error(
                 500, $ex
@@ -82,7 +72,7 @@ class UserController extends Controller
      */
     public function show()
     {
-        return ExceptionsDataAPI::success(200, $this->objeto->find(auth()->user()->id()));
+        return ExceptionsDataAPI::success(200, $this->objectDb->find(auth()->user()->id()));
     }
 
     /**
@@ -105,30 +95,33 @@ class UserController extends Controller
      */
     public function update(Request $request)
     {
-        $this->objeto->find(auth()->user()->id);
+        if ($this->requestDataValidation($request, $this->objectDb->rulesUpdate)) {
+            return ExceptionsDataAPI::error(406, $this->requestDataValidation($request, $rules));
+        }
+
+        $this->objectDb = $this->objectDb->find(auth()->user()->id);
 
         if (isset($request->name)) {
-            $this->objeto->name = $request->name;
+            $this->objectDb->name = $request->name;
         }
         if (isset($request->password)) {
-            $this->objeto->password = Hash::make($request->password);
+            $this->objectDb->password = Hash::make($request->password);
         }
         if (isset($request->email)) {
-            $this->objeto->email = $request->email;
+            $this->objectDb->email = $request->email;
         }
+
         try {
 
-            $this->objeto->save();
+            $this->objectDb->save();
             return ExceptionsDataAPI::success(
-                200, $this->objeto
+                200, $this->objectDb
             );
-
         } catch (Exception $ex) {
-            if ($this->objeto->save()) {
-                return ExceptionsDataAPI::error(
-                    401, $ex->getMessage()
-                );
-            }
+
+            return ExceptionsDataAPI::error(
+                401, $ex->getMessage()
+            );
         }
     }
 
